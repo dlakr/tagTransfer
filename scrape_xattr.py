@@ -33,10 +33,18 @@ def store_attributes(file_path):
 
 for root, dirs, files in os.walk(directory_to_sync):
 
+    # the program will have a list of computer and the path to their respective "drive" first part of the path
+
     for file in files:
-        print(file)
+
+        drive = " Drive"
         file_path = os.path.join(root, file)
-        store_attributes(file_path)
+        path_parts = file_path.split(drive)
+        path_start = path_parts[0]
+        path_end = drive + path_parts[1]
+        # STORE THE COMPUTER IDS IN THE PATH PATHS JSON
+        print(path_start)
+        store_attributes(path_end)
 
 # Commit changes and close the connection
 conn.commit()
