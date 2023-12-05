@@ -1,13 +1,18 @@
 import os
 import sqlite3
 import xattr
+import json
 from datetime import datetime
 
-# Define the directory you want to scan
-directory_to_scan = "/path/to/google/drive/folder"
+with open("paths.json", "r") as f:
+    p = json.load(f)
 
+# Define the directory you want to scan
+directory_to_sync = p["syncDir"]
+db_path = p["dbPath"]
 # Connect to the SQLite database
-conn = sqlite3.connect('file_attributes.db')
+# db_path = r"/Volumes/GoogleDrive/My Drive/PLICO_CLOUD/ADMIN/file_attributes.db"
+conn = sqlite3.connect(db_path)
 c = conn.cursor()
 
 # Create table
@@ -25,9 +30,11 @@ def store_attributes(file_path):
     except Exception as e:
         print(f"Error processing {file_path}: {e}")
 
-# Walk through the directory
-for root, dirs, files in os.walk(directory_to_scan):
+
+for root, dirs, files in os.walk(directory_to_sync):
+
     for file in files:
+        print(file)
         file_path = os.path.join(root, file)
         store_attributes(file_path)
 

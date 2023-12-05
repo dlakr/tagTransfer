@@ -1,9 +1,17 @@
 import os
 import sqlite3
 import xattr
+import json
+with open("paths.json", "r") as f:
+    p = json.load(f)
 
+# Define the directory you want to scan
+directory_to_sync = p["syncDir"]
+
+# Connect to the SQLite database
+# db_path = r"/Volumes/GoogleDrive/My Drive/PLICO_CLOUD/ADMIN/file_attributes.db"
+conn = sqlite3.connect(p["dbPath"])
 # Define the directory where the synced files are located
-directory_to_sync = "/path/to/synced/files"
 
 # Connect to the SQLite database
 conn = sqlite3.connect('file_attributes.db')
