@@ -21,9 +21,6 @@ db_path = rt + p["dbPath"]
 
 try:
     conn = sqlite3.connect(db_path)
-    # Define the directory where the synced files are located
-
-    # Connect to the SQLite database
     c = conn.cursor()
 except sqlite3.OperationalError as error:
     print(error)
@@ -38,7 +35,6 @@ def apply_attributes(file_path, attributes_str):
     except Exception as e:
         print(f"Error applying attributes to {file_path}: {e}")
 
-# Retrieve and apply only the latest attributes
 try:
 
     for row in c.execute('''

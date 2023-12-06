@@ -27,22 +27,38 @@ try:
 
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
+    # c.execute('''CREATE TABLE IF NOT EXISTS file_attributes
+    #              (filename TEXT PRIMARY KEY, attributes TEXT, timestamp DATETIME (filename, timestamp))''')
     c.execute('''CREATE TABLE IF NOT EXISTS file_attributes
-                 (filename TEXT, attributes TEXT, timestamp DATETIME, PRIMARY KEY (filename, timestamp))''')
+                 (filename TEXT PRIMARY KEY, 
+                  attributes TEXT, 
+                  timestamp DATETIME)''')
 except sqlite3.OperationalError as error:
     print(error)
     pass
-
+# def insert_or_update(file_path, attrs_str, current_timestamp):
+#     c.execute(F"SELECT id FROM file_attributes WHERE filename = ?", (file_path,))
+#     exists = c.fetchone()
+#     if exists:
+#         c.execute("UPDATE file_attributes SET (attributes, timestamp) WHERE filename VALUES (?, ?, ?)",
+#                   (file_path, attrs_str, current_timestamp))
+#     else:
+#         c.execute("INSERT OR REPLACE INTO file_attributes (filename, attributes, timestamp) VALUES (?, ?, ?)",
+#                   (file_path, attrs_str, current_timestamp))
+#     pass
 
 def store_attributes(file_path):
 
     try:
         import xattr
+        attr = 'com.apple.FinderInfo'
         attrs = xattr.xattr(file_path)
         attrs_str = str(dict(attrs))
         current_timestamp = datetime.now()
-        c.execute("INSERT INTO file_attributes (filename, attributes, timestamp) VALUES (?, ?, ?)",
+
+        c.execute("INSERT OR REPLACE INTO file_attributes (filename, attributes, timestamp) VALUES (?, ?, ?)",
                   (file_path, attrs_str, current_timestamp))
+
     except Exception as e:
         print(f"Error processing {file_path}: {e}")
 
