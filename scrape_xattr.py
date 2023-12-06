@@ -1,51 +1,65 @@
 import os
 import sqlite3
-import xattr
 import json
 from datetime import datetime
+import socket
 
+os_type = os.name
 with open("paths.json", "r") as f:
     p = json.load(f)
-
-# Define the directory you want to scan
 directory_to_sync = p["syncDir"]
 db_path = p["dbPath"]
-# Connect to the SQLite database
-# db_path = r"/Volumes/GoogleDrive/My Drive/PLICO_CLOUD/ADMIN/file_attributes.db"
-conn = sqlite3.connect(db_path)
-c = conn.cursor()
 
-# Create table
-c.execute('''CREATE TABLE IF NOT EXISTS file_attributes
-             (filename TEXT, attributes TEXT, timestamp DATETIME, PRIMARY KEY (filename, timestamp))''')
+try:
+    # Define the directory you want to scan
+
+    # Connect to the SQLite database
+    # db_path = r"/Volumes/GoogleDrive/My Drive/PLICO_CLOUD/ADMIN/file_attributes.db"
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+
+    # Create table
+    c.execute('''CREATE TABLE IF NOT EXISTS file_attributes
+                 (filename TEXT, attributes TEXT, timestamp DATETIME, PRIMARY KEY (filename, timestamp))''')
+except sqlite3.OperationalError as error:
+    pass
+
 
 # Function to store attributes in the database
 def store_attributes(file_path):
-    try:
-        attrs = xattr.xattr(file_path)
-        attrs_str = str(dict(attrs))
-        current_timestamp = datetime.now()
-        c.execute("INSERT INTO file_attributes (filename, attributes, timestamp) VALUES (?, ?, ?)",
-                  (file_path, attrs_str, current_timestamp))
-    except Exception as e:
-        print(f"Error processing {file_path}: {e}")
+    if os_type != 'nt':
+        import xattr
+        try:
+            attrs = xattr.xattr(file_path)
+            attrs_str = str(dict(attrs))
+            current_timestamp = datetime.now()
+            c.execute("INSERT INTO file_attributes (filename, attributes, timestamp) VALUES (?, ?, ?)",
+                      (file_path, attrs_str, current_timestamp))
+        except Exception as e:
+            print(f"Error processing {file_path}: {e}")
+    else:
+        print('wrong os')
 
 
-for root, dirs, files in os.walk(directory_to_sync):
+try:
+    for root, dirs, files in os.walk(directory_to_sync):
 
-    # the program will have a list of computer and the path to their respective "drive" first part of the path
+        # the program will have a list of computer and the path to their respective "drive" first part of the path
 
-    for file in files:
+        for file in files:
 
-        drive = " Drive"
-        file_path = os.path.join(root, file)
-        path_parts = file_path.split(drive)
-        path_start = path_parts[0]
-        path_end = drive + path_parts[1]
-        # STORE THE COMPUTER IDS IN THE PATH PATHS JSON
-        print(path_start)
-        store_attributes(path_end)
+            try:
+                std_root = str(root).replace('Mon','My ')
+            except:
+                std_root = root
 
-# Commit changes and close the connection
-conn.commit()
-conn.close()
+            file_path = os.path.join(std_root, file)
+            # STORE THE COMPUTER IDS IN THE PATH PATHS JSON
+            store_attributes(file_path)
+
+    # Commit changes and close the connection
+
+    conn.commit()
+    conn.close()
+except NameError as error:
+    pass
