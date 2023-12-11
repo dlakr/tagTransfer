@@ -1,8 +1,9 @@
 {
-  "dbPath": "/PLICO_CLOUD/ADMIN/file_attributes.db",
-  "syncDir": "/PLICO_CLOUD/PROJECTS/0000_PROJECT ADDRESS_CLIENT NAME_TEMPLATE",
-"os":{
-  "11": "~/Library/CloudStorage/GoogleDrive-cloud@plicodesignstudio.com/My Drive",
-  "10": "/Volumes/GoogleDrive/My Drive"
-}
+    "dbPathMaster": "/PLICO_CLOUD/ADMIN/FA/file_attributes.db",
+    "syncDir": "/PLICO_CLOUD/PROJECTS/0000_PROJECT ADDRESS_CLIENT NAME_TEMPLATE",
+    "os": {
+        "11": "~/Library/CloudStorage/GoogleDrive-cloud@plicodesignstudio.com/My Drive",
+        "10": "/Volumes/GoogleDrive/My Drive"
+    }
+
 }

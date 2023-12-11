@@ -39,9 +39,7 @@ try:
 
     for row in c.execute('''
         SELECT filename, attributes FROM file_attributes 
-        WHERE (filename, timestamp) IN (
-            SELECT filename, MAX(timestamp) FROM file_attributes GROUP BY filename
-        )
+        WHERE filename IN file_attributes 
     '''):
         filename, attrs_str = row
         machine_name = socket.gethostname()
